@@ -2,11 +2,9 @@ import { transaction } from '../../db/pool.js';
 import { findUser } from '../auth/auth.repository.js';
 import { z, parse, text, integer, skillsSchema } from '../../shared/validation.js';
 import { AppError } from '../../shared/errors/AppError.js';
-import { storeResume, removeUnreferencedNewFile } from '../../shared/storage.js';
+import { storeResume, removeUnreferencedNewFile, resumeExists } from '../../shared/storage.js';
 import * as repo from './profiles.repository.js';
 import { logger } from '../../config/logger.js';
-import { access } from 'node:fs/promises';
-import { storagePath } from '../../shared/storage.js';
 const schema = z
   .object({ currentCity: text(100), totalExperienceMonths: integer(0, 720), skills: skillsSchema })
   .strict();
@@ -46,9 +44,7 @@ export async function save(id, body, file, multipart = false) {
             'RESUME_REQUIRED',
             [{ field: 'resume', message: 'Choose a PDF resume up to 5 MiB' }]
           );
-        try {
-          await access(storagePath(existing.resume_storage_key));
-        } catch {
+        if (!(await resumeExists(existing.resume_storage_key))) {
           throw new AppError(
             'The saved resume is unavailable. Choose a replacement PDF.',
             400,

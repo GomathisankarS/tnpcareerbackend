@@ -47,6 +47,25 @@ export function parseAndValidateEnv(raw = process.env) {
     throw new Error(
       'Use the database DNS hostname for TLS identity verification, not an IP address'
     );
+  const storageDriver = raw.STORAGE_DRIVER || 'local';
+  if (!['local', 'supabase'].includes(storageDriver))
+    throw new Error('STORAGE_DRIVER must be local or supabase');
+  const storageUrl = raw.SUPABASE_URL || '';
+  const storageKey = raw.SUPABASE_SERVICE_ROLE_KEY || '';
+  const storageBucket = raw.SUPABASE_STORAGE_BUCKET || 'resumes';
+  if (storageDriver === 'supabase') {
+    let parsed;
+    try {
+      parsed = new URL(storageUrl);
+    } catch {
+      throw new Error('SUPABASE_URL must be an HTTPS origin');
+    }
+    if (parsed.protocol !== 'https:' || parsed.origin !== storageUrl)
+      throw new Error('SUPABASE_URL must be an HTTPS origin');
+    if (!storageKey.trim()) throw new Error('SUPABASE_SERVICE_ROLE_KEY is required');
+    if (!/^[a-zA-Z0-9_-]{1,100}$/.test(storageBucket))
+      throw new Error('Invalid SUPABASE_STORAGE_BUCKET');
+  }
   return Object.freeze({
     NODE_ENV: mode,
     isTest: test,
@@ -71,6 +90,10 @@ export function parseAndValidateEnv(raw = process.env) {
     COOKIE_SECURE: url.protocol === 'https:',
     UPLOAD_DIR: path.resolve(backendRoot, raw.UPLOAD_DIR || 'private-uploads'),
     AUTH_RATE_LIMIT: integer('AUTH_RATE_LIMIT', 30, 1000),
+    STORAGE_DRIVER: storageDriver,
+    SUPABASE_URL: storageUrl,
+    SUPABASE_SERVICE_ROLE_KEY: storageKey,
+    SUPABASE_STORAGE_BUCKET: storageBucket,
     MAX_PAGE_SIZE: 50,
     RESUME_MAX_BYTES: 5242880
   });
