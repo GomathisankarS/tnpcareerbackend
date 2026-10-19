@@ -7,7 +7,7 @@ Base path: `/api`. Success: `{success:true,data,meta?}`. Errors: `{success:false
 | GET /health | Public | Process liveness |
 | GET /health/db | Public | Database readiness |
 | POST /auth/register | Trusted Origin | Required fullName, email, mobileNumber, password; creates a candidate |
-| POST /auth/login | Trusted Origin | identifier (email/mobile), password; returns identity/accessToken and sets refresh cookie |
+| POST /auth/login | Trusted Origin | identifier (email/mobile), password, optional loginRole (candidate/admin); rejects role mismatch after password verification without issuing tokens; returns identity/accessToken and sets refresh cookie |
 | POST /auth/refresh | Trusted Origin + cookie | Rotates refresh token |
 | POST /auth/logout | Trusted Origin + cookie | Revokes family, clears cookie; 204 |
 | GET /auth/me | Bearer | Current identity |

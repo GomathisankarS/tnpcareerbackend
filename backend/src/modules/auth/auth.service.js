@@ -69,7 +69,13 @@ export async function register(body) {
 let dummy;
 export async function login(body) {
   const data = parse(
-    z.object({ identifier: text(254), password: z.string().min(1).max(128) }).strict(),
+    z
+      .object({
+        identifier: text(254),
+        password: z.string().min(1).max(128),
+        loginRole: z.enum(['candidate', 'admin']).optional()
+      })
+      .strict(),
     body
   );
   let column, value;
@@ -89,11 +95,23 @@ export async function login(body) {
   });
   const valid = await argon2.verify(user?.password_hash || (await dummy), data.password);
   if (!valid || !user?.is_active) throw invalid();
+  const checkLoginRole = (account) => {
+    if (data.loginRole && account.role !== data.loginRole)
+      throw new AppError(
+        data.loginRole === 'candidate'
+          ? 'This account is an administrator. Please use the admin login page.'
+          : 'This account is a candidate. Please use the candidate login page.',
+        403,
+        'LOGIN_ROLE_MISMATCH'
+      );
+  };
+  checkLoginRole(user);
   const refreshToken = newRefresh(),
     expires = new Date(Date.now() + env.REFRESH_TTL_SECONDS * 1000);
   const current = await transaction(async (c) => {
     const u = await repository.findUser(user.id, c, true);
     if (!u?.is_active) throw invalid();
+    checkLoginRole(u);
     await repository.insertSession(u.id, randomUUID(), hashRefresh(refreshToken), expires, c);
     return u;
   });
