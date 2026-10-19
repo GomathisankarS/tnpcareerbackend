@@ -42,7 +42,7 @@ Protected requests use `Authorization: Bearer <access token>`. Refresh cookies a
 
 ## Job filters and writes
 
-List query: page (default 1), limit (default 12, max 50), q (max 100), categoryId, experienceLevel, employmentType, workMode, city, featured (`true`/`false`), sort (`latest`/`salary`). Admin additionally accepts status (`draft`/`published`/`closed`). Unknown query keys, malformed codes and invalid ranges are rejected. Valid unknown option codes produce no matches. Meta contains page, limit, total and totalPages.
+List query: page (default 1), limit (default 8, max 50), q (max 100), categoryId, experienceLevel, employmentType, workMode, city, featured (`true`/`false`), sort (`latest`/`salary`). Admin additionally accepts status (`draft`/`published`/`closed`). Unknown query keys, malformed codes and invalid ranges are rejected. Valid unknown option codes produce no matches. Meta contains page, limit, total and totalPages.
 
 Writable fields: title (1-150), companyName (1-150), categoryId, locationCity (nullable), employmentType, workMode, experienceLevel, minExperienceMonths (0-720), maxExperienceMonths (nullable, at least min), salaryMinAnnualInr/salaryMaxAnnualInr (both null or 0 <= min <= max <= 9999999999.99), description (1-10000, plain text), skills (1-30 unique strings up to 60 characters), isFeatured, status. The server owns creator, timestamps and deletion.
 

@@ -23,6 +23,7 @@ const valid = {
   status: 'published'
 };
 it('job validation rejects inconsistent ranges and writable ownership', () => {
+  assert.equal(parse(filterSchema, {}).limit, 8);
   assert.equal(parse(jobSchema, valid).title, 'Developer');
   for (const patch of [
     { maxExperienceMonths: -1 },

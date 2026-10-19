@@ -37,6 +37,7 @@ export const jobSchema = z
   });
 export const filterSchema = pageSchema
   .extend({
+    limit: z.coerce.number().int().min(1).max(50).default(8),
     q: text(100).optional(),
     categoryId: z.coerce.number().int().positive().max(4294967295).optional(),
     experienceLevel: optionCode.optional(),
