@@ -1,0 +1,11 @@
+node_modules/
+.env
+logs/
+*.log
+coverage/
+
+.env.*
+!.env.example
+private-uploads/
+playwright-report/
+test-results/

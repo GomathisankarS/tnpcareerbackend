@@ -1,0 +1,53 @@
+{
+  "name": "tnp-job-portal-backend",
+  "version": "1.0.0",
+  "description": "TNP Careers API",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test --import ./tests/setup.js tests/*.test.js",
+    "lint": "eslint src tests scripts",
+    "lint:fix": "eslint src tests scripts --fix",
+    "format:check": "prettier --check \"src/**/*.js\" \"tests/**/*.js\" \"scripts/**/*.js\"",
+    "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\" \"scripts/**/*.js\"",
+    "db:migrate:options": "node scripts/migrate-job-options.js",
+    "db:inspect": "node scripts/inspect-db.js",
+    "test:db": "node --test tests/integration/*.test.js",
+    "admin:create": "node scripts/create-admin.js",
+    "db:export:setup": "node scripts/export-setup.js"
+  },
+  "keywords": [
+    "job-portal",
+    "express",
+    "mysql2",
+    "node"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "mysql2": "^3.12.0",
+    "argon2": "^0.44.0",
+    "jsonwebtoken": "^9.0.2",
+    "cookie-parser": "^1.4.7",
+    "express-rate-limit": "^8.1.0",
+    "zod": "^4.1.0",
+    "libphonenumber-js": "^1.12.0",
+    "multer": "^2.0.2",
+    "pdf-lib": "^1.17.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "eslint": "^9.20.1",
+    "supertest": "^7.0.0",
+    "prettier": "^3.6.0"
+  },
+  "engines": {
+    "node": ">=22.14.0"
+  }
+}
