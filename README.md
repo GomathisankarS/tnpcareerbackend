@@ -279,30 +279,7 @@ Follow these steps:
 4. In Workbench, open the **same database configured in backend `.env`**.
 5. Find the account in `users`, confirm its email/ID, change `role` from `candidate` to `admin`, and apply the edit.
 
-Alternatively, use SQL. Replace the example email with the email you just registered:
-
-```sql
-USE tnp_job_portal;
-
-SET @admin_email = 'your-registered-email@example.com';
-SET @admin_id = (
-  SELECT id FROM users WHERE email = @admin_email
-);
-
-SELECT id, full_name, email, role
-FROM users
-WHERE id = @admin_id;
-
-UPDATE users
-SET role = 'admin'
-WHERE id = @admin_id AND role = 'candidate';
-
-SELECT id, full_name, email, role
-FROM users
-WHERE id = @admin_id;
-```
-
-Confirm that the final result identifies the intended account and shows `role = admin`. If no row appears, check the email and selected database before continuing. Do not change `password_hash` or promote every row in the table.
+Change only the intended account’s **role** cell from **candidate** to **admin**, then click **Apply** in Workbench. Leave the other columns unchanged.
 
 6. If this account was signed in as a candidate, sign out.
 7. Open **`http://localhost:5173/admin/login`** and sign in with the same email/mobile number and password.
