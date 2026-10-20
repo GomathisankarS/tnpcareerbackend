@@ -2,9 +2,6 @@ import { pingDb } from '../../db/pool.js';
 import { AppError } from '../../shared/errors/AppError.js';
 import { logger } from '../../config/logger.js';
 
-/**
- * Returns basic server liveness data without querying the database.
- */
 export function getLiveness() {
   return {
     status: 'healthy',
@@ -13,10 +10,6 @@ export function getLiveness() {
   };
 }
 
-/**
- * Executes a live readiness probe against the MySQL database.
- * Throws a safe 503 AppError if the query fails.
- */
 export async function getDbReadiness(requestId) {
   try {
     const isAlive = await pingDb();

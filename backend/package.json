@@ -13,10 +13,8 @@
     "format:check": "prettier --check \"src/**/*.js\" \"tests/**/*.js\" \"scripts/**/*.js\"",
     "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\" \"scripts/**/*.js\"",
     "db:migrate:options": "node scripts/migrate-job-options.js",
-    "db:inspect": "node scripts/inspect-db.js",
     "test:db": "node --test tests/integration/*.test.js",
-    "admin:create": "node scripts/create-admin.js",
-    "db:export:setup": "node scripts/export-setup.js"
+    "admin:create": "node scripts/create-admin.js"
   },
   "keywords": [
     "job-portal",

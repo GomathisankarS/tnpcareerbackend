@@ -6,7 +6,7 @@ Express API for the TNP Careers job portal. The React frontend is maintained and
 
 - backend/src: configuration, database pool, shared middleware and feature modules.
 - backend/tests: unit/API tests and isolated database integration tests.
-- backend/scripts: administrator creation, schema inspection, explicit lookup migrations and setup export.
+- backend/scripts: administrator creation and explicit versioned migrations.
 - database: fresh installation SQL, original baseline, versioned migrations and database design.
 - docs/api.md: endpoint and response contracts.
 
@@ -14,11 +14,13 @@ Express API for the TNP Careers job portal. The React frontend is maintained and
 
 Use Node.js 22.14 or newer and MySQL 8.0.44 or compatible MySQL 8.0. Import database/setup.sql into a new empty database. It includes the current category and filter values; it contains no accounts or job/application data. Preserve existing databases and use the documented migrations only when required.
 
-From backend/, run npm ci, copy .env.example to .env and configure your connection and a random JWT_SECRET locally. The phone column is users.mobile_number. Run npm run db:inspect to check connectivity, then npm run dev. Never commit .env or private uploads.
+From backend/, run npm ci, copy .env.example to .env and configure your connection and a random JWT_SECRET locally. The phone column is users.mobile_number. Run npm run dev, then check /api/health and /api/health/db. Never commit .env or private uploads.
 
 Create an administrator with npm run admin:create after supplying ADMIN_EMAIL, ADMIN_PASSWORD and ADMIN_NAME privately in your local environment. Public registration always creates a candidate.
 
 ## Verification
+
+Final cleanup checks and limits: [docs/verification.md](docs/verification.md).
 
 From backend/, run npm test, npm run lint and npm run format:check. Database integration tests require a separate empty database ending in _test and TEST_DB_NAME; run npm run test:db only against that isolated database. Do not use the populated application database for tests.
 
@@ -30,14 +32,13 @@ Configure NODE_ENV=production, FRONTEND_ORIGIN as the exact HTTPS frontend origi
 
 Check /api/health and /api/health/db after deployment. Configure the separate Vercel frontend to proxy /api to the actual backend URL and provide an SPA fallback; verify cookies and origin handling end to end.
 
-Resume storage supports a private Supabase bucket for Render and local files for development. Configure the Supabase environment variables below before relying on production uploads. Proxy trust/rate limiting also needs validation for the final hosting chain. Uploading this source to GitHub does not deploy a live service.
+Resume storage supports a private Supabase bucket for Render and local files for development. Configure the Supabase environment variables below before relying on production uploads. Proxy trust/rate limiting also needs validation for the final hosting chain. Deployment status must be checked in Render after each push.
 
 ## Design
 
 Controllers translate HTTP requests; services implement business rules; repositories use parameterized MySQL queries. Authentication uses Argon2id password hashes, short-lived JWT access tokens and rotating opaque refresh tokens in HttpOnly cookies. Refresh token hashes and revocation families are persisted. Authorization checks current roles and resource ownership on the server. Applications enforce one candidate/job pair and retain a snapshot of the required profile resume. Catalog options are managed through admin APIs.
 
 ## Private Supabase resume storage
-
 
 Create a private bucket named resumes with PDF-only uploads and a 5 MiB limit. Do not enable public access or public upload policies. Application users authenticate with this API; the backend accesses the bucket using its server-only legacy service_role key. No Supabase Auth accounts or change to the Aiven database are required.
 

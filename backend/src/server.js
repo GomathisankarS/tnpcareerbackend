@@ -13,11 +13,6 @@ const server = app.listen(env.PORT, () => {
 
 let isShuttingDown = false;
 
-/**
- * Handles graceful shutdown by closing HTTP server and database pool.
- *
- * @param {string} signal
- */
 async function gracefulShutdown(signal, exitCode = 0) {
   if (isShuttingDown) {
     return;
@@ -34,7 +29,6 @@ async function gracefulShutdown(signal, exitCode = 0) {
   forceExitTimeout.unref();
 
   try {
-    // 1. Stop receiving new HTTP connections
     await new Promise((resolve, reject) => {
       server.close((err) => {
         if (err) return reject(err);
@@ -43,7 +37,6 @@ async function gracefulShutdown(signal, exitCode = 0) {
     });
     logger.info('HTTP server closed cleanly.');
 
-    // 2. Close MySQL connection pool
     await closePool();
 
     logger.info('Graceful shutdown completed successfully.');
